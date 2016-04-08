@@ -41,12 +41,32 @@ module.exports = function(grunt) {
       }
     },
 
+    less: {
+      dev: {
+        options: {
+          paths: ['src/stylesheets']
+        },
+        files: [{
+          expand: true,
+          cwd: 'src/stylesheets',
+          src: '*.less',
+          dest: 'public/stylesheets',
+          ext: '.css'
+        }]
+      }
+    },
+
     watch: {
       js: {
         files: ['src/javascripts/*.js', 'src/javascripts/**/*.js'],
         tasks: ['babel'],
         options: { spawn: false }
-      }
+      },
+
+      less: {
+        files: ['src/stylesheets/*.less', 'src/stylesheets/**/*.less'],
+        tasks: ['less:dev']
+      },
     }
   });
 
@@ -56,6 +76,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
   }
 
-  grunt.registerTask('build', ['babel']);
+  grunt.registerTask('build', ['babel', 'less']);
   grunt.registerTask('default', ['build', 'concurrent']);
 };
