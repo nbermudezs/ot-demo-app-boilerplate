@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-
+  require('time-grunt')(grunt);
   require("load-grunt-tasks")(grunt);
 
   grunt.initConfig({
@@ -21,6 +21,20 @@ module.exports = function(grunt) {
       }
     },
 
+    clean: {
+      dist: {
+        files: [{
+          dot: true,
+          src: [
+            '.tmp',
+            'public/*',
+            '!public/.git*'
+          ]
+        }]
+      },
+      server: ['.tmp'],
+    },
+
     concurrent: {
       dev: {
         tasks: ['connect', 'watch'],
@@ -38,6 +52,17 @@ module.exports = function(grunt) {
             path: 'public'
           }
         }
+      }
+    },
+
+    imagemin: {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: 'src/images',
+          src: '**/*.{png,jpg,jpeg}',
+          dest: 'public/images'
+        }]
       }
     },
 
@@ -67,6 +92,11 @@ module.exports = function(grunt) {
         files: ['src/stylesheets/*.less', 'src/stylesheets/**/*.less'],
         tasks: ['less:dev']
       },
+
+      images: {
+        files: ['src/images/*.{png,jpg,jpeg}'],
+        tasks: ['imagemin:dist']
+      }
     }
   });
 
@@ -76,6 +106,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
   }
 
-  grunt.registerTask('build', ['babel', 'less']);
+  grunt.registerTask('build', ['clean:dist', 'babel', 'less', 'imagemin']);
   grunt.registerTask('default', ['build', 'concurrent']);
 };
